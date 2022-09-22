@@ -1,7 +1,17 @@
 extern crate pwr_hd44780;
 
+use clap::Parser;
 use pwr_hd44780::Hd44780;
 use pwr_hd44780::frontends::Direct;
+use std::process;
+
+#[derive(Parser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    #[clap(long, short, action)]
+    off: bool,
+}
+
 
 fn main() {
     let team1 = Team {
@@ -23,9 +33,19 @@ fn main() {
         home: team1,
         isTop: true,
     };
+   
+    let args = Args::parse();
+
     
+
     let mut display = create_lcd();
-    display.off().unwrap();
+    
+    if args.off {
+        display.off().unwrap();
+        process::exit(0);
+    }
+
+    display.update_board(scoreboard).unwrap();
 }
 
 struct LCDDisplay {
